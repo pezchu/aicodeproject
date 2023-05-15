@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Snake Game</title>
+</head>
+<body>
+<canvas id="canvas" width="500" height="500"></canvas>
+<script>
+var canvas = document.getElementById("canvas");
+var ctx = canvas.getContext("2d");
+
+// Create the snake
+var snake = [];
+snake.push({
+  x: 200,
+  y: 200
+});
+
+// Create the food
+var food = {
+  x: Math.floor(Math.random() * 500),
+  y: Math.floor(Math.random() * 500)
+};
+
+// Set the snake's direction
+var direction = "right";
+
+// Draw the snake
+function drawSnake() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  for (var i = 0; i < snake.length; i++) {
+    ctx.fillStyle = "black";
+    ctx.fillRect(snake[i].x, snake[i].y, 10, 10);
+  }
+}
+
+// Draw the food
+function drawFood() {
+  ctx.fillStyle = "red";
+  ctx.fillRect(food.x, food.y, 10, 10);
+}
+
+// Update the snake's position
+function updateSnake() {
+  switch (direction) {
+    case "up":
+      snake[0].y -= 10;
+      break;
+    case "down":
+      snake[0].y += 10;
+      break;
+    case "left":
+      snake[0].x -= 10;
+      break;
+    case "right":
+      snake[0].x += 10;
+      break;
+  }
+
+  // Check if the snake hit the food
+  if (snake[0].x === food.x && snake[0].y === food.y) {
+    // Add a new segment to the snake
+    snake.push({
+      x: snake[snake.length - 1].x,
+      y: snake[snake.length - 1].y
+    });
+
+    // Generate a new food location
+    food.x = Math.floor(Math.random() * 500);
+    food.y = Math.floor(Math.random() * 500);
+  }
+
+  // Check if the snake hit the edge of the canvas
+  if (snake[0].x < 0 || snake[0].x > canvas.width) {
+    gameOver();
+  } else if (snake[0].y < 0 || snake[0].y > canvas.height) {
+    gameOver();
+  }
+
+  // Check if the snake hit itself
+  for (var i = 1; i < snake.length; i++) {
+    if (snake[0].x === snake[i].x && snake[0].y === snake[i].y) {
+      gameOver();
+    }
+  }
+}
+
+// Handle key presses
+document.addEventListener("keydown", function(event) {
+  switch (event.keyCode) {
+    case 38: // up arrow
+      direction = "up";
+      break;
+    case 40: // down arrow
+      direction = "down";
+      break;
+    case 37: // left arrow
+      direction = "left";
+      break;
+    case 39: // right arrow
+      direction = "right";
+      break;
+  }
+});
+
+// Start the game loop
+setInterval(function() {
+  drawSnake();
+  drawFood();
+  updateSnake();
+}, 100);
+
+// Game over function
+function gameOver() {
+  alert("Game over!");
+}
+</script>
+</body>
+</html>
